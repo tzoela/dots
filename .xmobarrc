@@ -1,0 +1,17 @@
+Config { font = "-*-Fixed-Bold-R-Normal-*-13-*-*-*-*-*-*-*"
+        , borderColor = "black"
+        , border = TopB
+        , bgColor = "black"
+        , fgColor = "grey"
+        , position = TopW L 100
+        , commands = [ Run Weather "EGCC" ["-t","<tempC>C","-L","18","-H","25","--normal","green","--high","red","--low","lightblue"] 36000
+                     , Run MultiCpu ["-t","Cpu: <total0>% <total1>% <total2>% <total3>%","-L","30","-H","60","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC","-w","3"] 10
+                     , Run Memory ["-t","Mem: <usedratio>%"] 10
+                     , Run Com "uname" ["-s","-r"] "" 36000
+                     , Run Date "%a %b %_d %Y %H:%M:%S" "date" 10
+                     , Run Com "/bin/bash" ["-c", "~/.xmonad/get-volume"] "myvolume" 10
+                     ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        , template = "%multicpu% | %memory% }{ <fc=#ee9a00>%date%</fc> | Vol: %myvolume%  | %uname% | %EGCC%"
+        }
