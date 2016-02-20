@@ -33,22 +33,27 @@ myLayout = (avoidStruts tiled) ||| Full
 
 myManageHooks = composeAll [isFullscreen --> doFullFloat]
 
-volumeUp = do
-  spawn "amixer set Master on && amixer set Headphone on && amixer set Master 2+ unmute"
-  spawn "killall notify-osd; notify-send \"Volume up\" \"$(~/.xmonad/get-volume)\" -i notification-audio-volume-high"
+volumeUp :: X ()
+volumeUp = changeVolume "2+" "notification-audio-volume-high" "Volume Up"
 
-volumeDown = do
-  spawn "amixer set Master on && amixer set Headphone on && amixer set Master 2- unmute"
-  spawn "killall notify-osd; notify-send \"Volume down\" \"$(~/.xmonad/get-volume)\" -i notification-audio-volume-low"
+volumeDown :: X ()
+volumeDown = changeVolume "2-" "notification-audio-volume-low" "Volume Down"
 
+toggleMute :: X ()
 toggleMute = do
   spawn "amixer set Headphone 100% && amixer set Master 100% && amixer set Master toggle && amixer set Headphone toggle&& amixer set Speaker toggle"
   spawn "killall notify-osd; notify-send \"Mute Toggle\" \"Who knows?\""
 
+changeVolume :: String -> String -> String -> X ()
+changeVolume diff icon text = do
+  spawn ("amixer set Master on && amixer set Headphone on && amixer set Master " ++ diff ++ " unmute")
+  spawn ("killall notify-osd; notify-send \"" ++ text ++ "\" \"$(~/.xmonad/get-volume)\" -i " ++ icon)
+
+
 myHook :: X()
 myHook = do
-  spawnOnce "conky"
   spawn "amixer set -c 0 Headphone 100 unmute && amixer set -c 0 Master 100 unmute"
+  spawn "xautolock -time 10 -locker lock"
   spawnOnce "xmobar"
   spawnOnce "gnome-terminal"
   spawnOnce "emacs"
